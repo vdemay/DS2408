@@ -11,14 +11,22 @@ Devices devices;
 uint8_t device_count;
 
 void setup(void) {
-    Serial.begin(9600);
-
     device_count = ds.find(&devices);
     print_devices(&devices, device_count);
 }
 
-void loop(void) { 
-    delay(10000);
+void loop(void) {
+    for(int index=0; index < device_count; index++) {
+      uint8_t readDevice = ds.get_state(devices[index]);
+      if (readDevice & 0b00000001) {
+        //switch closed - ligh led
+        // 0 -> led on
+        // 1 -> led off
+        ds.set_state(devices[index], ~0b00010000); 
+      } else {
+        ds.set_state(devices[index], ~0b00000000); 
+      }
+    }
 }
 
 /* --------------- PRINT HELPERS --------------- */
